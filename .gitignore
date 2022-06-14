@@ -1,2 +1,8 @@
 
 .DS_Store
+FashionMNIST/FashionMNIST/*
+.idea/*
+*.iml
+.idea/GAN-Learning.iml
+*.xml
+FashionMNIST/__pycache__/data_loader.cpython-39.pyc

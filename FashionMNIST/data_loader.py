@@ -2,24 +2,84 @@ import torch
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, Lambda
+from torchvision.io import read_image
 import os
-import pandas
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# download a mnist dataset
-def downloadDataset():
-    train_data = datasets.FashionMNIST(
-        root="./FashionMNIST",
-        train=True,
-        download=True,
-        transform=ToTensor()
-    )
+"""
+Fashion MNIST Dataset Class
+"""
+class MNISTDataset(Dataset):
+    def __init__(self, path, download=True, trans_func=ToTensor(), label_func=Lambda(lambda x: torch.zeros(10, dtype=torch.float).scatter_(0,torch.tensor(x), value=1))):
+        # 1. download the dataset
+        self.train_data = datasets.FashionMNIST(
+            root = path,
+            train = True,
+            download = download,
+            transform = trans_func
+        )
+        self.test_data = datasets.FashionMNIST(
+            root = path,
+            train = False,
+            download = download,
+            transform = trans_func
+        )
+        self.transform = trans_func
+        self.label_transform = label_func
 
-    test_data = datasets.FashionMNIST(
-        root="./FashionMNIST",
-        trian=False,
-        download=True,
-        transform=ToTensor()
-    )
-    return train_data, test_data
+        # 2. load raw image data and annotations
+        self.data_path = os.path.join(path, "FashionMNIST/raw/")
+        self.labels = pd.read_csv(os.path.join(self.data_path, "train-labels-idx1-ubyte"), encoding='latin-1')
 
+        # deal with the dataset
+        self.labels_map = {
+            0: "T-Shirt",
+            1: "Trouser",
+            2: "Pullover",
+            3: "Dress",
+            4: "Coat",
+            5: "Sandal",
+            6: "Shirt",
+            7: "Sneaker",
+            8: "Bag",
+            9: "Ankle Boot",
+        }
+
+    """
+    brief: to query the size of dataset
+    """
+    def __len__(self):
+        return len(self.labels)
+
+    """
+    brief: to get one item from the dataset
+    """
+    def __getitem__(self, item):
+        img_name, img_label = self.labels.iloc[item]
+        img_path = os.path.join(self.img_path, img_name)
+        img_data = read_image(img_path)
+        if self.transform:
+            img_data = self.transform(img_data)
+        if self.label_transform:
+            img_label = self.label_tranform(img_label)
+        return img_data, img_label
+
+    def getTrainData(self):
+        return self.train_data
+
+    def getTestData(self):
+        return self.test_data
+
+    def randomShowImages(self, n):
+        figure = plt.figure(figsize=(8, 8))
+        cols, rows = n, n
+        for i in range(1, cols * rows + 1):
+            sample_idx = torch.randint(len(self.train_data), size=(1,)).item()
+            img, label = self.train_data[sample_idx]
+            figure.add_subplot(rows, cols, i)
+            plt.title(self.labels_map[label])
+            plt.axis("off")
+            plt.imshow(img.squeeze(), cmap="gray")
+        plt.show()
