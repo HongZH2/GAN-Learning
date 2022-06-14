@@ -6,3 +6,4 @@ FashionMNIST/FashionMNIST/*
 .idea/GAN-Learning.iml
 *.xml
 FashionMNIST/__pycache__/data_loader.cpython-39.pyc
+FashionMNIST/__pycache__/mNetwork.cpython-39.pyc
