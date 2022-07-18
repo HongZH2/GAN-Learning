@@ -1,8 +1,4 @@
-'''
-My Network
-'''
 
-import os
 from torch import nn
 
 class MNeuralNetwork(nn.Module):
@@ -16,6 +12,7 @@ class MNeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.Linear(512, 10),
         )
+
     def forward(self, x):
         x = self.flatten(x)
         logits = self.linear_relu_stack(x)
