@@ -7,3 +7,5 @@ FashionMNIST/FashionMNIST/*
 *.xml
 FashionMNIST/__pycache__/data_loader.cpython-39.pyc
 FashionMNIST/__pycache__/mNetwork.cpython-39.pyc
+*.pth
+FashionMNIST/__pycache__/train.cpython-39.pyc
