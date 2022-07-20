@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # dataset.randomShowImages(5)
 
     # step 3. batch the dataset and set some params
-    batch_size = 64
+    batch_size = 16
     learning_rate = 1e-3
     epochs = 20
 
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     print(mnetwork)
 
     # step 5.  set the optimizer
-    optimizer = torch.optim.SGD(mnetwork.parameters(), lr=learning_rate, momentum=0.9)
-
+    # optimizer = torch.optim.SGD(mnetwork.parameters(), lr=learning_rate, momentum=0.9)
+    optimizer = torch.optim.Adam(mnetwork.parameters(), lr=learning_rate) # 差距不大
     # step 6. loss function
     loss_func = nn.CrossEntropyLoss()
 
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     print("Done!")
 
     # step 8. save the model
-    torch.save(mnetwork, 'mnn_results_momentum.pth')
+    torch.save(mnetwork, 'mnn_results_Adam_BS16.pth')
